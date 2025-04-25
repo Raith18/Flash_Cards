@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Interactive Flashcards</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #77eaf9;
+      --secondary-color: #3a71c3;
+      --accent-color: #98e4f3;
+      --light-color: #f8f9fa;
+      --dark-color: #212529;
+      --success-color: #38b000;
+      --error-color: #ff5a5f;
+      --teacher-color: #ff7b00;
+      --student-color: #00b4d8;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: var(--dark-color);
+      overflow-x: hidden;
+    }
+    
+    .login-container {
+      width: 90%;
+      max-width: 1000px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease-out;
+      display: flex;
+      position: relative;
+    }
+    
+    .login-hero {
+      flex: 1;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .login-hero::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      left: -50px;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: pulse 8s infinite ease-in-out;
+    }
+    
+    .login-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px;
+      right: -80px;
+      width: 300px;
+      height: 300px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: pulse 12s infinite ease-in-out;
+      animation-delay: 2s;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 0.5; }
+    }
+    
+    .login-hero h1 {
+      font-size: 2.8rem;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      animation: fadeInDown 1s ease-out;
+    }
+    
+    .login-hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 1.5s ease-out;
+    }
+    
+    .card-animation {
+      width: 220px;
+      height: 140px;
+      background: white;
+      border-radius: 12px;
+      margin: 20px 0;
+      position: relative;
+      transform-style: preserve-3d;
+      animation: cardFlip 6s infinite ease-in-out, float 8s infinite ease-in-out;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    
+    @keyframes cardFlip {
+      0%, 100% { transform: rotateY(0deg); }
+      50% { transform: rotateY(180deg); }
+    }
+  
+    .login-form {
+      flex: 1;
+      padding: 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .login-form h2 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+      color: var(--primary-color);
+      text-align: center;
+      animation: fadeIn 1s ease-out;
+    }
+    
+    .avatar-selection {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+      gap: 30px;
+      animation: fadeIn 1.2s ease-out;
+    }
+    
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 4px solid transparent;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .avatar.student {
+      background: linear-gradient(135deg, var(--student-color), #0096c7);
+      color: white;
+    }
+    
+    .avatar.teacher {
+      background: linear-gradient(135deg, var(--teacher-color), #ff9500);
+      color: white;
+    }
+    
+    .avatar.selected {
+      transform: scale(1.15);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      border-color: white;
+    }
+    
+    .avatar:hover {
+      transform: scale(1.1);
+    }
+    
+    .input-group {
+      margin-bottom: 25px;
+      position: relative;
+      animation: fadeIn 1.4s ease-out;
+    }
+    
+    .input-group label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 500;
+      color: #555;
+    }
+    
+    .input-field {
+      position: relative;
+    }
+    
+    .input-field i {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+      transition: all 0.3s ease;
+    }
+    
+    .input-group input {
+      width: 100%;
+      padding: 15px 20px 15px 50px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .input-group input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 4px rgba(118, 216, 240, 0.2);
+      outline: none;
+    }
+    
+    .input-group input:focus + i {
+      color: var(--primary-color);
+      transform: translateY(-50%) scale(1.2);
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      margin-top: 20px;
+      box-shadow: 0 10px 20px rgba(114, 229, 240, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeIn 1.6s ease-out;
+    }
+    
+    .btn i {
+      margin-right: 10px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .btn span {
+      position: relative;
+      z-index: 2;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to right, var(--secondary-color), var(--accent-color));
+      transition: all 0.6s ease;
+      z-index: 1;
+    }
+    
+    .btn:hover::before {
+      left: 0;
+    }
+    
+    .btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(103, 209, 239, 0.4);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .error-message {
+      color: var(--error-color);
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      display: none;
+      animation: shake 0.5s;
+    }
+    
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    
+    .login-footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+      font-size: 0.9rem;
+      color: #666;
+      animation: fadeIn 1.8s ease-out;
+    }
+    
+    .login-footer a {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .login-footer a:hover {
+      color: var(--secondary-color);
+      text-decoration: underline;
+    }
+    
+    .floating-icons {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+    
+    .floating-icon {
+      position: absolute;
+      display: block;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+      animation: float 15s linear infinite;
+      bottom: -150px;
+    }
+    
+    /* Create multiple floating icons with different sizes and positions */
+    .floating-icon:nth-child(1) {
+      left: 10%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 0s;
+      animation-duration: 15s;
+    }
+    
+    .floating-icon:nth-child(2) {
+      left: 25%;
+      width: 40px;
+      height: 40px;
+      animation-delay: 2s;
+      animation-duration: 20s;
+    }
+    
+    .floating-icon:nth-child(3) {
+      left: 70%;
+      width: 30px;
+      height: 30px;
+      animation-delay: 4s;
+      animation-duration: 18s;
+    }
+    
+    .floating-icon:nth-child(4) {
+      left: 40%;
+      width: 25px;
+      height: 25px;
+      animation-delay: 1s;
+      animation-duration: 22s;
+    }
+    
+    .floating-icon:nth-child(5) {
+      left: 65%;
+      width: 15px;
+      height: 15px;
+      animation-delay: 3s;
+      animation-duration: 16s;
+    }
+    
+    @media (max-width: 768px) {
+      .login-container {
+        flex-direction: column;
+        width: 95%;
+        max-width: 500px;
+      }
+      
+      .login-hero {
+        padding: 40px 20px;
+        order: -1;
+      }
+      
+      .login-hero h1 {
+        font-size: 2rem;
+      }
+      
+      .login-form {
+        padding: 40px 30px;
+      }
+      
+      .avatar {
+        width: 70px;
+        height: 70px;
+        font-size: 1.8rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .avatar-selection {
+        gap: 15px;
+      }
+      
+      .avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+      }
+      
+      .login-form {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="floating-icons">
+      <div class="floating-icon"></div>
+      <div class="floating-icon"></div>
+      <div class="floating-icon"></div>
+      <div class="floating-icon"></div>
+      <div class="floating-icon"></div>
+    </div>
+    
+    <div class="login-hero">
+      <h1>Welcome to FlashcardsPro</h1>
+      <p>Revolutionize your learning experience with interactive flashcards</p>
+      <div class="card-animation"></div>
+    </div>
+    
+    <div class="login-form">
+      <h2>Login to Continue</h2>
+      
+      <div class="avatar-selection">
+        <div class="avatar student selected" data-role="student" onclick="selectRole(this)">
+          <i class="fas fa-user-graduate"></i>
+        </div>
+        <div class="avatar teacher selected" data-role="teacher" onclick="selectRole(this)">
+          <i class="fas fa-chalkboard-teacher"></i>
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <label for="username">Username</label>
+        <div class="input-field">
+          <i class="fas fa-user"></i>
+          <input type="text" id="username" placeholder="Enter your username">
+        </div>
+      </div>
+      
+      <div class="input-group">
+        <label for="password">Password</label>
+        <div class="input-field">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="password" placeholder="Enter your password">
+        </div>
+      </div>
+      
+      <button class="btn" onclick="login()">
+        <span><i class="fas fa-sign-in-alt"></i> Login</span>
+      </button>
+      
+      <p class="error-message" id="error-message">Incorrect username or password</p>
+      
+      <div class="login-footer">
+        Need help? <a href="#">Contact support</a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- New script to initialize avatar state -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const avatars = document.querySelectorAll('.avatar');
+      avatars.forEach(avatar => avatar.classList.remove('selected'));
+      document.querySelector('.avatar.student').classList.add('selected');
+      selectedRole = 'student';
+    });
+  </script>
+  
+  <!-- Original script, unchanged -->
+  <script>
+    let selectedRole = 'student';
+    
+    function selectRole(element) {
+      // Remove selected class from all avatars
+      document.querySelectorAll('.avatar').forEach(avatar => {
+        avatar.classList.remove('selected');
+      });
+      
+      // Add selected class to clicked avatar
+      element.classList.add('selected');
+      selectedRole = element.getAttribute('data-role');
+      
+      // Add bounce animation
+      element.classList.add('animate_animated', 'animate_bounceIn');
+      setTimeout(() => {
+        element.classList.remove('animate_animated', 'animate_bounceIn');
+      }, 1000);
+    }
+    
+    function login() {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorMessage = document.getElementById('error-message');
+      const loginBtn = document.querySelector('.btn');
+      
+      // Debug: Log the selected role
+      console.log('Selected Role:', selectedRole);
+      
+      // Validate inputs
+      if (!username || !password) {
+        errorMessage.textContent = 'Please enter both username and password';
+        errorMessage.style.display = 'block';
+        return;
+      }
+      
+      // Show loading state
+      loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Im Groot';
+      loginBtn.disabled = true;
+      
+      // Simulate API call with timeout
+      setTimeout(() => {
+        // Teacher credentials
+        const teacherCredentials = [
+          { username: 'AmanPal', password: 'daridruda' },
+          { username: 'professor', password: 'prof123' }
+        ];
+        
+        // Student credentials
+        const studentCredentials = [
+          { username: 'thanos', password: '0/0' },
+          { username: 'learner', password: 'learn123' }
+        ];
+        
+        let isValid = false;
+        let redirectPage = '';
+        
+        if (selectedRole === 'teacher') {
+          isValid = teacherCredentials.some(cred => 
+            cred.username.toLowerCase() === username.toLowerCase() && 
+            cred.password.toLowerCase() === password.toLowerCase()
+          );
+          redirectPage = 'teacher-input.html';
+        } else {
+          isValid = studentCredentials.some(cred => 
+            cred.username.toLowerCase() === username.toLowerCase() && 
+            cred.password.toLowerCase() === password.toLowerCase()
+          );
+          redirectPage = 'student-quiz.html';
+        }
+        
+        if (isValid) {
+          // Success - redirect with animation
+          document.querySelector('.login-container').classList.add('animate_animated', 'animate_fadeOut');
+          setTimeout(() => {
+            window.location.href = redirectPage;
+          }, 800);
+        } else {
+          // Error - show message and reset button
+          errorMessage.textContent = 'Invalid credentials for selected role';
+          errorMessage.style.display = 'block';
+          loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+          loginBtn.disabled = false;
+          
+          // Shake animation for error
+          document.querySelector('.login-container').classList.add('animate_animated', 'animate_shakeX');
+          setTimeout(() => {
+            document.querySelector('.login-container').classList.remove('animate_animated', 'animate_shakeX');
+          }, 1000);
+          
+          // Hide error after 3 seconds
+          setTimeout(() => {
+            errorMessage.style.display = 'none';
+          }, 3000);
+        }
+      }, 1500);
+    }
+    
+    // Add keyboard support
+    document.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        login();
+      }
+    });
+    
+    // Add input focus effects
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentNode.parentNode.querySelector('label').style.color = 'var(--primary-color)';
+      });
+      
+      input.addEventListener('blur', function() {
+        this.parentNode.parentNode.querySelector('label').style.color = '#555';
+      });
+    });
+    
+    // Add periodic pulse animation to card
+    setInterval(() => {
+      const card = document.querySelector('.card-animation');
+      card.classList.add('animate_animated', 'animate_pulse');
+      setTimeout(() => {
+        card.classList.remove('animate_animated', 'animate_pulse');
+      }, 1000);
+    }, 10000);
+  </script>
+</body>
+</html>
